@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Register</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+          integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+          crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+          integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+          crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+          integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+          crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/e59232f0a1.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/static/pageStyle.css">
+</head>
+<body>
+
+<!--NAVIGATION BAR-->
+<nav class="navbar">
+  <div class="image-container">
+    <img src="/static/logo-white-no-text.png" alt="My Image" class="centered-and-resized">
+    <img src="/static/logo-text.png" alt="Logo text" class="centered-and-resized logo-text">
+  </div>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary pt-2 pb-2">
+    <div class="container-fluid d-flex justify-content-center align-items-center">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span><!--slika-->
+      </button>
+      <div class="collapse navbar-collapse text-center" id="navbarText">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+
+          <li class="nav-item">
+            <a class="nav-link px-3" aria-current="page" href="/home">ПОЧЕТНА</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3" href="/historicalLegacies">ИСТОРИСКИ НАСЛЕДСТВА</a>
+          </li>
+          <li class="nav-item">
+            <!--tuka home-->
+            <a class="nav-link px-3" href="/about">ЗА НАС</a>
+          </li>
+          <li class="nav-item">
+            <!--tuka home-->
+            <a class="nav-link px-3" href="/contact">КОНТАКТ</a>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right ml-20">
+
+          <li class="nav-item ml-5" sec:authorize="isAuthenticated()">
+            <img src="/static/user-icon-white.png" style="width: 35px; height:auto" alt="User Icon">
+            <a href="#" class="btn btn-primary"
+               style="background-color: #263956; border-color: #263956; padding-left: 0"
+               sec:authentication="name">
+            </a>
+          </li>
+
+          <li class="nav-item ml-4" sec:authorize="isAuthenticated()">
+            <a class="btn btn-primary ml-3" href="/logout">
+              <i class="fa-solid fa-right-from-bracket"></i> Одјави се
+            </a>
+          </li>
+          <li class="nav-item ml-4" sec:authorize="isAnonymous()">
+            <a class="btn btn-primary ml-3"
+               href="/login">
+              <i class="fa-solid fa-right-to-bracket"></i> Најави се
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</nav>
+<!--NAVIGATION BAR-->
+
+<section>
+  <div xmlns:th="http://www.thymeleaf.org">
+
+    <div class="container mb-4">
+      <form class="form-signin mt-xl-5" method="post" action="/register" autocomplete="off">
+        <h2 class="form-signin-heading">Регистрирај се</h2>
+        <p>
+          <label for="username" class="sr-only">Корисничко име</label>
+          <input type="text" id="username" name="username" class="form-control" placeholder="Username" required="" autofocus="" maxlength="15">
+        </p>
+        <p>
+          <label for="password" class="sr-only">Лозинка</label>
+          <input type="password" id="password" name="password" class="form-control" placeholder="Password" required="">
+        </p>
+        <p>
+          <label for="repeatedPassword" class="sr-only">Повтори лозинка</label>
+          <input type="password" id="repeatedPassword" name="repeatedPassword" class="form-control" placeholder="Repeat Password" required="">
+        </p>
+        <p>
+          <label for="name" class="sr-only">Име</label>
+          <input type="text" id="name" name="name" class="form-control" placeholder="Name" required="" autofocus="">
+        </p>
+        <p>
+          <label for="surname" class="sr-only">Презиме</label>
+          <input type="text" id="surname" name="surname" class="form-control" placeholder="Surname" required="" autofocus="">
+        </p>
+
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" name="role" type="radio" id="ROLE_ADMIN" value="ROLE_ADMIN">
+          <label class="form-check-label" for="ROLE_ADMIN">Админ</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" name="role"  type="radio" id="ROLE_USER" value="ROLE_USER">
+          <label class="form-check-label" for="ROLE_USER">Корисник</label>
+        </div>
+
+        <th:block th:if="${hasError}">
+          <div th:text="${error}" class="text-danger"></div>
+        </th:block>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+      </form>
+      <a href="/login" class="btn btn-block btn-light">Already have an account? Login here!</a>
+    </div>
+  </div>
+</section>
+</body>
+</html>

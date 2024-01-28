@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8"/>
+    <title>Historical legacies</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <link rel="stylesheet" type="text/css" href="/static/pageStyle.css">
+</head>
+<body class="overflow-hidden-section">
+<!--NAVIGATION BAR-->
+<nav class="navbar">
+    <div class="image-container">
+        <img src="/static/logo-white-no-text.png" alt="Logo" class="centered-and-resized">
+        <img src="/static/logo-text.png" alt="Logo text" class="centered-and-resized logo-text">
+    </div>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary pt-2 pb-2">
+        <div class="container-fluid d-flex justify-content-center align-items-center">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span><!--slika-->
+            </button>
+            <div class="collapse navbar-collapse text-center" id="navbarText">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+
+                    <li class="nav-item">
+                        <a class="nav-link px-3" aria-current="page" href="/home">ПОЧЕТНА</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active px-3" href="/historicalLegacies">ИСТОРИСКИ НАСЛЕДСТВА</a>
+                    </li>
+                    <li class="nav-item">
+                        <!--tuka home-->
+                        <a class="nav-link px-3" href="/about">ЗА НАС</a>
+                    </li>
+                    <li class="nav-item">
+                        <!--tuka home-->
+                        <a class="nav-link px-3" href="/contact">КОНТАКТ</a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right ml-20">
+
+                    <li class="nav-item ml-5" sec:authorize="isAuthenticated()">
+                        <img src="/static/user-icon-white.png" style="width: 35px; height:auto" alt="User Icon">
+                        <a href="#" class="btn btn-primary"
+                           style="background-color: #263956; border-color: #263956; padding-left: 0"
+                           sec:authentication="name">
+                        </a>
+                    </li>
+
+                    <li class="nav-item ml-4" sec:authorize="isAuthenticated()">
+                        <a class="btn btn-primary ml-3" href="/logout">
+                            <i class="fa-solid fa-right-from-bracket"></i> Одјави се
+                        </a>
+                    </li>
+                    <li class="nav-item ml-4" sec:authorize="isAnonymous()">
+                        <a class="btn btn-primary ml-3"
+                           href="/login">
+                            <i class="fa-solid fa-right-to-bracket"></i> Најави се
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</nav>
+<!--NAVIGATION BAR-->
+<div class="col-lg-4 vh-100 overlay-container" style="background-color: rgba(254,254,255,0.56);">
+<div class="container" id="h-form">
+    <div class="row">
+        <div class="col-md-6 form-container">
+            <form id="myForm" th:action="@{/historicalLegacies/save}" th:method="POST" onkeydown="return handleEnterKey(event)">
+                <input id="id" type="hidden" name="id"
+                       th:value="(${heritage} != null ? ${heritage.getId()} : '')">
+                <div class="form-group mb-4" style="width:400px">
+                    <label for="name" style="font-size: 20px">Име</label>
+                    <input type="text"
+                           class="form-control"
+                           id="name"
+                           name="name"
+                           th:value="(${heritage} != null ? ${heritage.getName()} : '')"
+                           required
+                           placeholder="Внеси име на наследство">
+                </div>
+
+                <div class="form-group mb-4" style="width:400px">
+                    <label for="city" style="font-size: 20px">Град</label>
+                        <select id="city" name="city" class="form-control">
+                            <option th:if="${heritage} != null"
+                                    th:selected="${heritage.getCity() != null &&
+                                    heritage.getCity() == cityy}"
+                                    th:each="cityy : ${cities}"
+                                    th:value="${cityy}"
+                                    th:text="${cityy}">
+                            </option>
+                            <option th:if="${heritage} == null"
+                                    th:each="cityy : ${cities}"
+                                    th:value="${cityy}"
+                                    th:text="${cityy}">
+                            </option>
+                        </select>
+                </div>
+
+                <div class="form-group mb-4" style="width:400px">
+                    <label for="category" style="font-size: 20px">Категорија</label>
+                        <select id="category" name="category" class="form-control">
+                            <option th:if="${heritage} != null"
+                                    th:selected="${heritage.getCategory() != null &&
+                                    heritage.getCategory() == categoryy}"
+                                    th:each="categoryy : ${categories}"
+                                    th:value="${categoryy}"
+                                    th:text="${categoryy}">
+                            </option>
+                            <option th:if="${heritage} == null"
+                                    th:each="categoryy : ${categories}"
+                                    th:value="${categoryy}"
+                                    th:text="${categoryy}">
+                            </option>
+                        </select>
+                </div>
+
+                <div class="form-group mb-4" style="width:400px">
+                    <label for="lat" style="font-size: 20px">Географска ширина (Latitude)</label>
+                    <input type="number"
+                           class="form-control"
+                           id="lat"
+                           name="lat"
+                           th:value="(${heritage} != null ? ${heritage.getLat()} : '')"
+                           required
+                           min="40.8530500"
+                           max="42.3736110"
+                           step="0.0000001"
+                           onkeydown="return handleEnterKey(event);">
+                </div>
+
+                <div class="form-group mb-5" style="width:400px">
+                    <label for="lon" style="font-size: 20px">Географска должина (Longitude)</label>
+                    <input type="number"
+                           class="form-control"
+                           id="lon"
+                           name="lon"
+                           th:value="(${heritage} != null ? ${heritage.getLon()} : '')"
+                           required
+                           min="20.4636110"
+                           max="23.0052780"
+                           step="0.0000001"
+                           onkeydown="return handleEnterKey(event);">
+                </div>
+                <div class="button-container">
+                    <button id="submit" type="submit" class="btn btn-primary">Зачувај</button>
+                    <a type="button" class="btn btn-primary" href="/historicalLegacies">Назад</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function handleEnterKey(event) {
+            if (event.key === 'Enter') {
+                // Check if the focused element is the "lon" input field
+                if (document.activeElement.id === 'lon' || document.activeElement.id === 'lat') {
+                    // Call the updateMapMarker function with the current values of lat and lon inputs
+                    updateMapMarker(parseFloat(document.getElementById('lat').value), parseFloat(document.getElementById('lon').value));
+                }else{
+                    event.preventDefault();
+                }
+
+                return false;
+            }
+            return true;
+        }
+    </script>
+</div>
+</div>
+
+<!--MAPA!-->
+<div class="col-lg-12 vh-100 map-container">
+    <div id="map1" class="w-100 h-100"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script th:inline="javascript">
+    let mapOptions = {
+        center: [41.628, 21.742],
+        zoom: 8,
+        zoomControl: false
+    }
+
+    let map = new L.map('map1', mapOptions);
+    let layer = new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+    map.addLayer(layer);
+
+    L.control.zoom({ position: 'topright' }).addTo(map);
+
+    // Declare marker variable outside the function
+    let marker;
+    let currentZoom = map.getZoom(); // Store the initial zoom level
+
+    // Function to update the map marker based on lat and lon inputs
+    function updateMapMarker(lat, lon) {
+        console.log('Updating marker:', lat, lon);
+
+        // Check if marker exists and remove it
+        if (marker) {
+            map.removeLayer(marker);
+        }
+
+        // Add a new marker
+        marker = L.marker([lat, lon]).addTo(map);
+        map.setView([lat, lon], currentZoom); // Set the map view to the marker with the current zoom
+
+        // Update the lat and lon inputs
+        document.getElementById('lat').value = lat.toFixed(7);
+        document.getElementById('lon').value = lon.toFixed(7);
+    }
+
+    // Attach the updateMapMarker function to the change event of lat and lon inputs
+    document.getElementById('lat').addEventListener('change', function () {
+        updateMapMarker(parseFloat(this.value), parseFloat(document.getElementById('lon').value));
+    });
+
+    document.getElementById('lon').addEventListener('change', function () {
+        updateMapMarker(parseFloat(document.getElementById('lat').value), parseFloat(this.value));
+    });
+
+    // Attach the updateMapMarker function to the click event of the map
+    map.on('click', function (event) {
+        updateMapMarker(event.latlng.lat, event.latlng.lng);
+    });
+
+    // Update the currentZoom variable when the map is zoomed
+    map.on('zoomend', function () {
+        currentZoom = map.getZoom();
+    });
+</script>
+
+
+<!--MAPA!-->
+</body>
+</html>

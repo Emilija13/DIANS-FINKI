@@ -1,0 +1,139 @@
+#h-form{
+    margin-top: 30px;
+    margin-left: 30px
+}
+
+.navbar{
+    background-color: #263956;
+}
+
+.nav-link{
+    color: azure;
+    font-size: 20px;
+}
+
+.nav-link:hover, .active{
+    color: #4d5b85
+}
+
+.image-container {
+    margin-left: 40px;
+    position: relative;
+}
+
+.centered-and-resized {
+    width: 85px; /* Set the desired width for the image */
+    height: auto; /* Maintain the aspect ratio by setting height to auto */
+}
+
+.logo-text{
+    width: 180px;
+    height:auto;
+}
+
+.heritage-item{
+    background-color: rgba(239, 243, 255, 0.69); !important
+}
+
+.heritage-item:hover{
+    background-color: rgba(167, 178, 197, 0.62); !important
+}
+
+.edit-checkbox{
+    top: 3px;
+    left: 3px;
+}
+
+.map-container{
+    position:fixed;
+    z-index: -1;
+}
+
+.overlay-container{
+    position: absolute;
+    z-index: 1;
+}
+
+
+body {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent; /* Firefox */
+}
+
+.overflow-hidden-section {
+    overflow: hidden; /* Prevent default browser scrollbars */
+}
+
+/* Define scrollbar style for WebKit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+/* Define scrollbar track style for WebKit browsers */
+::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+/* Define scrollbar handle style for WebKit browsers */
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+}
+
+/* Show scrollbar only when scrolling */
+body:hover {
+    scrollbar-color: #888 transparent; /* Firefox */
+}
+
+.s-button{
+    font-size: 15px;
+}
+
+.heritage-item {
+    position: relative;
+}
+
+.edit-link {
+    position: absolute;
+    top: 5px;
+    right: 20px;
+    z-index: 1;
+    text-decoration: none; /* Add this to remove the underline, adjust as needed */
+    color: inherit; /* Inherit the color from the parent */
+}
+
+.heritage-item-link {
+    display : flex;
+    align-items : center;
+    z-index: 0; /* Ensuring heritage-item-link is below the edit-link */
+    color: inherit; /* Inherit the color from the parent */
+    text-decoration: none; /* Add this to remove the underline, adjust as needed */
+    height: 100%; /* Make the heritage-item-link take the full height of heritage-item */
+    overflow: hidden; /* Hide any content overflow to avoid unnecessary scrollbars */
+}
+
+.div-forms{
+    width: 400px;
+}
+
+.form-container {
+    position: relative;
+}
+
+.button-container {
+    position: absolute;
+    top: 500px; /* Adjust the top position as needed */
+    right: -180px; /* Align to the right side */
+    margin-top: 10px; /* Adjust the margin as needed */
+}
+
+.del-checkbox {
+    visibility: hidden;
+}
+
+.user-nav{
+    margin-left: 20px;
+}
+
+.navbar {
+    z-index: 1000; /* Ensure the navbar stays on top */
+}

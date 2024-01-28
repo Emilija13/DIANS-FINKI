@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Historical legacies</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <link rel="stylesheet" href="/static/pageStyle.css">
+
+</head>
+
+<body class="overflow-hidden-section">
+<!--NAVIGATION BAR-->
+<nav class="navbar">
+    <div class="image-container">
+        <img src="/static/logo-white-no-text.png" alt="Logo" class="centered-and-resized">
+        <img src="/static/logo-text.png" alt="Logo text" class="centered-and-resized logo-text">
+    </div>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary pt-2 pb-2">
+        <div class="container-fluid d-flex justify-content-center align-items-center">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span><!--slika-->
+            </button>
+            <div class="collapse navbar-collapse text-center" id="navbarText">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+
+                    <li class="nav-item">
+                        <a class="nav-link px-3" aria-current="page" href="/home">ПОЧЕТНА</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active px-3" href="/historicalLegacies">ИСТОРИСКИ НАСЛЕДСТВА</a>
+                    </li>
+                    <li class="nav-item">
+                        <!--tuka home-->
+                        <a class="nav-link px-3" href="/about">ЗА НАС</a>
+                    </li>
+                    <li class="nav-item">
+                        <!--tuka home-->
+                        <a class="nav-link px-3" href="/contact">КОНТАКТ</a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right ml-20">
+
+                    <li class="nav-item ml-5" sec:authorize="isAuthenticated()">
+                        <img src="/static/user-icon-white.png" style="width: 35px; height:auto" alt="User Icon">
+                        <a href="#" class="btn btn-primary"
+                           style="background-color: #263956; border-color: #263956; padding-left: 0"
+                           sec:authentication="name">
+                        </a>
+                    </li>
+
+                    <li class="nav-item ml-4" sec:authorize="isAuthenticated()">
+                        <a class="btn btn-primary ml-3" href="/logout">
+                            <i class="fa-solid fa-right-from-bracket"></i> Одјави се
+                        </a>
+                    </li>
+                    <li class="nav-item ml-4" sec:authorize="isAnonymous()">
+                        <a class="btn btn-primary ml-3"
+                           href="/login">
+                            <i class="fa-solid fa-right-to-bracket"></i> Најави се
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</nav>
+<!--NAVIGATION BAR-->
+
+
+
+<section class="">
+
+    <div class="container-fluid">
+        <div class="row">
+            <!--STRANICEN PREGLED LEVO-->
+            <div class="col-lg-4 vh-100 overlay-container" style="background-color: rgba(254,254,255,0.56);">
+                <!--SEARCH BAR-->
+                <form th:method="get" th:action="@{/historicalLegacies/search}" autocomplete="off">
+                    <div class="pb-1 mr-3 ml-3 container"><!--label i kopche-->
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="pt-4 pb-4 pl-3"><span style="color: #084672; font-size: 25px">Пребарувај локации</span></div>
+                            </div>
+                            <div class="col-md-4 mt-5">
+                                <div class="pt-1 pb-1 pl-3">
+                                    <input class="s-button btn btn-primary btn-lg rounded-pill pt-1 pb-1" type="submit" value="Прикажи">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pb-1 mr-3 ml-3">
+                        <input type="text" name="name" th:value="${search}" placeholder="Пребарувај име" class="w-100 pl-3 pr-3 pt-1 pb-1 form-control rounded">
+                    </div>
+
+                    <div class="pt-1 pb-1 mr-3 ml-3">
+                        <select name="city" class="w-100 pt-1 pb-1 pl-3 pr-3 form-control rounded">
+                            <option value="">Сите градови</option>
+                            <option th:each="cityOption : ${cities}" th:value="${cityOption}" th:text="${cityOption}" th:selected="${cityOption == selectedCity}"></option>
+                        </select>
+                    </div>
+
+                    <div class="pt-1 pb-1 mr-3 ml-3">
+                        <select name="category" class="w-100 pt-1 pb-1 pl-3 pr-3 form-control rounded">
+                            <option value="">Сите категории</option>
+                            <option th:each="categoryOption : ${categories}" th:value="${categoryOption}" th:text="${categoryOption}" th:selected="${categoryOption == selectedCategory}"></option>
+                        </select>
+                    </div>
+
+                </form>
+                <!--SEARCH BAR-->
+
+
+                <!--PRIKAZ NA REZULTATI-->
+                <form th:method="post" th:action="@{/historicalLegacies/deleteHeritages}" method="post" class="mt-2">
+                    <div class="pt-1 pb-1 mr-3 ml-3">
+                        <a th:href="@{/historicalLegacies/add-heritage}" class="btn btn-sm btn-success ">
+                            <span class="fa fa-plus">Додади наследство</span>
+                        </a>
+
+                        <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                            <input type="submit" name="submit" id="submit" value="Избриши наследства" class="btn btn-sm btn-danger " style="display: inline">
+                        </th:block>
+                    </div>
+
+
+                    <div th:if="${heritages != null and heritages.size() > 0}" class="mt-3">
+                        <div class="overflow-auto ml-3" style="max-height: 325px; overflow-y: auto;">
+                            <table>
+                                <tr th:each="heritage : ${heritages}">
+                                    <!--<input  class="ml-3 mt-3 del-checkbox" type="checkbox" name="heritageIds" th:value="${heritage.getId()}">!-->
+                                    <div class="heritage-item mb-1" style="height: 175px" onmouseover="showCheckbox(this)" onmouseout="hideCheckbox(this)">
+                                        <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                                            <a><input  class="ml-2 mt-2 del-checkbox" type="checkbox" name="heritageIds" th:value="${heritage.getId()}"
+                                            onchange="toggleVisibility(this)" onmouseover="showCheckbox(this.closest('.heritage-item'))"></a>
+                                            <a class="edit-link" th:href="@{/historicalLegacies/edit-form/{id}(id=${heritage.getId()})}">Измени</a>
+                                        </th:block>
+                                    <a href="#" class="heritage-item-link" style="text-decoration: none; color: inherit;"
+                                       th:data-lat="${heritage.getLat()}" th:data-lon="${heritage.getLon()}"
+                                       th:data-name="${heritage.getName()}" th:data-city="${heritage.getCity()}"
+                                       th:data-category="${heritage.getCategory()}">
+                                        <div class="center">
+                                            <div th:if="${not #authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                                                <span class="pl-5 pb-1 h3 d-block" style="height:30px"></span>
+                                            </div>
+                                            <span class="pl-5 pb-1 h3 d-block" th:text="${heritage.getName()}"></span>
+                                            <span class="pl-5 pb-1 h5 d-block" th:text="${heritage.getCity()}"></span>
+                                            <span class="pl-5 pb-2 d-block" th:text="${heritage.getCategory()}"></span>
+                                        </div>
+                                    </a>
+                                    </div>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </form>
+
+                <script>
+                    function showCheckbox(element) {
+                        // Find the checkbox within the heritage-item and set visibility to 'visible'
+                        let checkbox = element.querySelector('.del-checkbox');
+                        checkbox.style.visibility = 'visible';
+                    }
+
+                    function hideCheckbox(element) {
+                        // Find all checkboxes within the heritage-items
+                        let checkboxes = document.querySelectorAll('.del-checkbox');
+
+                        // Check if at least one checkbox is checked
+                        let atLeastOneChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+
+                        // Set visibility for all checkboxes based on whether at least one is checked
+                        checkboxes.forEach(checkbox => {
+                            checkbox.style.visibility = atLeastOneChecked ? 'visible' : 'hidden';
+                        });
+                    }
+
+                    function toggleVisibility(element) {
+                        // Check if the checkbox is checked and call the appropriate method
+                        if (element.checked) {
+                            showCheckbox(element.closest('.heritage-item'));
+                        } else {
+                            hideCheckbox(element.closest('.heritage-item'));
+                        }
+                    }
+                </script>
+
+
+                <!-- Add a delete button outside the loop -->
+
+
+                <!--PRIKAZ NA REZULTATI-->
+
+            </div>
+            <!--STRANICEN PREGLED LEVO-->
+
+            <!--STRANICEN PREGLED DESNO-->
+
+
+            <div class="col-lg-12 vh-100 map-container">
+                <div id="map" class="w-100 h-100"></div>
+            </div>
+
+            <script th:inline="javascript">
+                /*<![CDATA[*/
+                let heritageData = /*[[${heritages}]]*/ [];
+                /*]]>*/
+            </script>
+
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+            <script th:inline="javascript">
+                let mapOptions = {
+                    center: [41.628, 21.742],
+                    zoom: 8,
+                    zoomControl: false
+                }
+
+                let map = new L.map('map', mapOptions);
+                let layer = new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+                map.addLayer(layer);
+
+                L.control.zoom({ position: 'topright' }).addTo(map);
+
+                function handleHeritageItemClick(e) {
+                    e.preventDefault();
+
+                    // Extract data attributes
+                    let lat = parseFloat(e.currentTarget.getAttribute('data-lat'));
+                    let lon = parseFloat(e.currentTarget.getAttribute('data-lon'));
+                    let name = e.currentTarget.getAttribute('data-name');
+                    let city = e.currentTarget.getAttribute('data-city');
+                    let category = e.currentTarget.getAttribute('data-category');
+
+                    // Zoom in on the marker using flyTo
+                    map.flyTo([lat, lon], 15, { duration: 1.5 });
+
+                    // Display popup
+                    L.popup()
+                        .setLatLng([lat, lon])
+                        .setContent(`
+                <div>
+                    <p><strong>Име:</strong> ${name}</p>
+                    <p><strong>Град:</strong> ${city}</p>
+                    <p><strong>Тип:</strong> ${category}</p>
+                </div>
+            `)
+                        .openOn(map);
+                }
+
+                // Iterate over the heritage data and add markers to the map
+                heritageData.forEach(function (heritage) {
+                    let marker = L.marker([heritage.lat, heritage.lon]).addTo(map);
+
+                    marker.bindPopup(`
+            <div>
+                <p><strong>Name:</strong> ${heritage.name}</p>
+                <p><strong>City:</strong> ${heritage.city}</p>
+                <p><strong>Type:</strong> ${heritage.category}</p>
+            </div>
+        `);
+
+                    marker.on('mouseover', function (e) {
+                        this.openPopup();
+                    });
+
+                    // Hide popup on marker mouseout
+                    marker.on('mouseout', function (e) {
+                        this.closePopup();
+                    });
+
+                    // Zoom in on marker click
+                    marker.on('click', function (e) {
+                        map.setView([heritage.lat, heritage.lon], 13); // Set the desired zoom level
+                    });
+                });
+
+                document.querySelectorAll('.heritage-item-link').forEach(function (link) {
+                    link.addEventListener('click', handleHeritageItemClick);
+                });
+            </script>
+            <!--STRANICEN PREGLED DESNO-->
+
+        </div>
+    </div>
+
+</section>
+
+</body>
+</html>
